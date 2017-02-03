@@ -157,27 +157,27 @@ while test $# -gt 0; do
   --transport=*)
     TRANSPORT=$(echo "$1" | sed -e "s;--transport=;;")   ;;
   --joiner-host=*)
-    JOINER_HOST=$(echo "$1" | sed -e "s;--joiner-host=;;")   ;;
+    joiner_host=$(echo "$1" | sed -e "s;--joiner-host=;;")   ;;
   --joiner-port=*)
-    JOINER_PORT=$(echo "$1" | sed -e "s;--joiner-port=;;")   ;;
+    joiner_port=$(echo "$1" | sed -e "s;--joiner-port=;;")   ;;
   --bbcp-netbuf=*)
-    BBCP_NETBUF=$(echo "$1" | sed -e "s;--bbcp-netbuf=;;")   ;;
+    bbcp_netbuf=$(echo "$1" | sed -e "s;--bbcp-netbuf=;;")   ;;
   --bbcp-threads=*)
-    BBCP_THREADS=$(echo "$1" | sed -e "s;--bbcp-threads=;;")   ;;
+    bbcp_threads=$(echo "$1" | sed -e "s;--bbcp-threads=;;")   ;;
   --socat-netbuf=*)
     socat_netbuf=$(echo "$1" | sed -e "s;--socat-netbuf=;;")   ;;
   --ssl-cipher=*)
-    SSL_CIPHER=$(echo "$1" | sed -e "s;--ssl-cipher=;;")   ;;
+    ssl_cipher=$(echo "$1" | sed -e "s;--ssl-cipher=;;")   ;;
   --xb-threads=*)
-    XB_THREADS=$(echo "$1" | sed -e "s;--xb-threads=;;")   ;;
+    xb_threads=$(echo "$1" | sed -e "s;--xb-threads=;;")   ;;
   --xb-enc-algo=*)
-    XB_ENC_ALGO=$(echo "$1" | sed -e "s;--xb-enc-algo=;;")   ;;
+    xb_enc_algo=$(echo "$1" | sed -e "s;--xb-enc-algo=;;")   ;;
   --xb-enc-key=*)
-    XB_ENC_KEY=$(echo "$1" | sed -e "s;--xb-enc-key=;;")   ;;
+    xb_enc_key=$(echo "$1" | sed -e "s;--xb-enc-key=;;")   ;;
   --xb-enc-chunk=*)
-    XB_ENC_CHUNK=$(echo "$1" | sed -e "s;--xb-enc-chunk=;;")   ;;
+    xb_enc_chunk=$(echo "$1" | sed -e "s;--xb-enc-chunk=;;")   ;;
   --xb-enc-threads=*)
-    XB_ENC_THREADS=$(echo "$1" | sed -e "s;--xb-enc-threads=;;")   ;;
+    xb_enc_threads=$(echo "$1" | sed -e "s;--xb-enc-threads=;;")   ;;
   -- )  shift; break ;;
   --*) echo "Unrecognized option: $1" ; usage ;;
   * ) break ;;
