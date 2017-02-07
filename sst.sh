@@ -46,15 +46,15 @@ xb_enc_chunk=1M
 bbcp_netbuf=8M
 bbcp_threads=8
 
-donor_cmd_xtrabackup() 
+donor_cmd_xbackup() 
 {
   cmd="xtrabackup --backup --datadir=$donor_datadir --stream=xbstream --parallel=$xb_threads"
 }
 
-donor_cmd_xtrabackup_enc()
+donor_cmd_xbackup_enc()
 {
   cmd="xtrabackup --backup --datadir=$donor_datadir --stream=xbstream --parallel=$xb_threads \
-                  --encrypt-threads=$xb_enc_threads --encrypt=$xb_enc_algo --encrypt-key-file=$xb_enc_key --encrypt-chunk-size=$xb_enc_chunk"
+--encrypt-threads=$xb_enc_threads --encrypt=$xb_enc_algo --encrypt-key-file=$xb_enc_key --encrypt-chunk-size=$xb_enc_chunk"
 }
 
 donor_cmd_bbcp()
@@ -79,7 +79,7 @@ donor_transport_socat()
 
 donor_transport_socat_ssl()
 {
-  transport="socat -b $socat_netbuf_size -u stdio openssl-connect:$socat_joiner_host:$socat_joiner_port,cert=${ssl_cert},key=${ssl_key},cafile=${ssl_ca},verify=0"
+  transport="socat -b $socat_netbuf -u stdio openssl-connect:$joiner_host:$joiner_port,cipher=${!cipher_list},cert=${ssl_cert},key=${ssl_key},cafile=${ssl_ca},verify=0"
 }
 
 donor_transport_bbcp()
@@ -105,7 +105,7 @@ joiner_transport_socat()
 
 joiner_transport_socat_ssl()
 {
-  transport="socat -b $socat_netbuf -u openssl-listen:$joiner_port,reuseaddr,cert=${ssl_cert},key=${ssl_key},cafile=${ssl_ca},verify=0  stdio"
+  transport="socat -b $socat_netbuf -u openssl-listen:$joiner_port,reuseaddr,cipher=${!cipher_list},cert=${ssl_cert},key=${ssl_key},cafile=${ssl_ca},verify=0  stdio"
 }
 
 
@@ -204,7 +204,7 @@ if [ "$TRANSPORT" != "socat" -a "$TRANSPORT" != "socat_ssl"  -a "$TRANSPORT" != 
    usage "Wrong trnasport: $TRANSPORT"
 fi
 
-if [ "$TRANSPORT" == "socat_ssl" -a "$ssl_cipher" != "aes128" -a "$TRANSPORT" != "aes256"  -a "$TRANSPORT" != "chacha20" ]; then 
+if [ "$TRANSPORT" == "socat_ssl" -a -n "$ssl_cipher" -a "$ssl_cipher" != "aes128" -a "$ssl_cipher" != "aes256"  -a "$ssl_cipher" != "chacha20" ]; then 
    usage "Wrong ssl_cipher: $ssl_cipher"
 fi
 
@@ -224,6 +224,7 @@ if [ -z "$joiner_datadir" ]; then
    usage "set joiner_datadir"
 fi
 
+cipher_list="cipher_list_"${ssl_cipher:-"aes128"}
 
 eval donor_cmd_${DONOR_CMD}
 result_donor_cmd=$cmd
