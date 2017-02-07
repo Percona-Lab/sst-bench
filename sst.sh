@@ -84,7 +84,8 @@ donor_transport_socat_ssl()
 
 donor_transport_bbcp()
 {
-   transport="bbcp -P 2 -w $bbcp_netbuf -s $bbcp_threads  -N io \'$donor_cmd\' $joiner_host:\'$joiner_cmd\'"
+   transport="bbcp -P 2 -w $bbcp_netbuf -s $bbcp_threads  -N io '$result_donor_cmd' $joiner_host:'$result_joiner_cmd'"
+   result_donor_cmd=""
 }
 
 joiner_cmd_xbstream()
@@ -203,6 +204,10 @@ if [ "$TRANSPORT" != "socat" -a "$TRANSPORT" != "socat_ssl"  -a "$TRANSPORT" != 
    usage "Wrong trnasport: $TRANSPORT"
 fi
 
+if [ "$TRANSPORT" == "socat_ssl" -a "$ssl_cipher" != "aes128" -a "$TRANSPORT" != "aes256"  -a "$TRANSPORT" != "chacha20" ]; then 
+   usage "Wrong ssl_cipher: $ssl_cipher"
+fi
+
 if [ -z "$joiner_host" ]; then 
    usage "set joiner_host"
 fi
@@ -219,14 +224,24 @@ if [ -z "$joiner_datadir" ]; then
    usage "set joiner_datadir"
 fi
 
+
+eval donor_cmd_${DONOR_CMD}
+result_donor_cmd=$cmd
+
+eval joiner_cmd_${JOINER_CMD}
+result_joiner_cmd=$cmd
+
 eval ${MODE}_transport_${TRANSPORT}
 
+
 if [ "$MODE" == "donor" ]; then 
-  eval ${MODE}_cmd_${DONOR_CMD}
   echo "DONOR CMD:"
-  echo "$cmd | $transport"
+  if [ -n "$result_donor_cmd" ]; then 
+    echo "$result_donor_cmd | $transport"
+  else
+    echo "$transport"
+  fi
 else
-  eval ${MODE}_cmd_${JOINER_CMD}
   echo "JOINER CMD:"
-  echo "$transport | $cmd"
+  echo "$transport | $result_joiner_cmd"
 fi
